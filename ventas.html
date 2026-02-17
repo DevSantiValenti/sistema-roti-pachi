@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Ventas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="icon" href="img/pachiPNG.png">
+</head>
+
+<body class="bg-black text-white min-h-screen pb-28">
+
+    <div class="md:flex min-h-screen">
+
+        <!-- SIDEBAR DESKTOP -->
+        <aside class="hidden md:flex md:flex-col w-64 bg-zinc-950 p-6 border-r border-white/10">
+
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-full border-2 border-yellow-400 overflow-hidden">
+                    <img src="img/pachiPNG.png" class="w-full h-full object-cover" />
+                </div>
+                <div>
+                    <h2 class="font-bold">Panel Admin</h2>
+                    <p class="text-xs text-slate-400">Ventas</p>
+                </div>
+            </div>
+
+            <nav class="flex flex-col gap-4 text-sm">
+                <button onclick="window.location.href='dash.html'"
+                    class="flex items-center gap-3 text-slate-400 hover:text-yellow-400 transition">
+                    <span class="material-icons">restaurant_menu</span>
+                    Inicio
+                </button>
+
+                <button class="flex items-center gap-3 text-yellow-400 font-semibold">
+                    <span class="material-icons">equalizer</span>
+                    Ventas
+                </button>
+
+                <button onclick="window.location.href='pedidos.html'"
+                    class="flex items-center gap-3 text-slate-400 hover:text-yellow-400 transition">
+                    <span class="material-icons">notifications</span>
+                    Pedidos
+                </button>
+            </nav>
+
+            <div class="mt-auto pt-10">
+                <button onclick="logoutAndExit()" class="text-red-500 text-sm">
+                    Cerrar sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO -->
+        <div class="flex-1 flex flex-col">
+
+            <!-- HEADER MOBILE -->
+            <nav class="md:hidden sticky top-0 z-50 bg-black/80 backdrop-blur border-b border-white/10 px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-black rounded-full border-2 border-yellow-400 p-1">
+                            <img class="w-10 h-10 object-cover rounded-full" src="img/pachiPNG.png" />
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold">Panel Admin</h1>
+                            <p class="text-xs text-slate-400">Ventas</p>
+                        </div>
+                    </div>
+                    <button onclick="logoutAndExit()" class="text-red-500 text-sm">
+                        Cerrar sesión
+                    </button>
+                </div>
+            </nav>
+
+            <main class="flex-1 w-full max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 py-6 md:p-10 space-y-6">
+
+                <div id="stats" class="space-y-4"></div>
+
+                <div id="orders-counts"></div>
+
+                <div class="bg-zinc-900 p-4 rounded-2xl shadow-lg">
+                    <h2 class="text-sm text-slate-400 mb-3">Ingresos últimos 7 días</h2>
+                    <canvas id="salesChart"></canvas>
+                </div>
+
+                <div id="category-ranking" class="space-y-3"></div>
+
+                <div id="sales-list" class="space-y-3"></div>
+
+            </main>
+
+            <!-- FOOTER MOBILE -->
+            <nav
+                class="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-white/10 px-6 py-3 flex justify-around items-center">
+
+                <button onclick="window.location.href='dash.html'"
+                    class="flex flex-col items-center text-slate-400 text-xs">
+                    <span class="material-icons">restaurant_menu</span>
+                    Inicio
+                </button>
+
+                <button class="flex flex-col items-center text-yellow-400 text-xs">
+                    <span class="material-icons">equalizer</span>
+                    Ventas
+                </button>
+
+                <button onclick="window.location.href='pedidos.html'"
+                    class="relative flex flex-col items-center gap-1 text-slate-400 text-xs">
+
+                    <div class="relative">
+                        <span class="material-icons">notifications</span>
+
+                        <span id="orders-badge" class="hidden absolute -top-2 -right-3 
+                   bg-black text-yellow-400 
+                   text-[10px] font-bold 
+                   min-w-[18px] h-[18px] 
+                   px-1 flex items-center justify-center 
+                   rounded-full border border-yellow-400">
+                        </span>
+                    </div>
+
+                    Pedidos
+                </button>
+
+
+            </nav>
+
+        </div>
+    </div>
+
+    <audio id="order-sound" preload="auto">
+        <source src="notif.mp3" type="audio/mpeg">
+    </audio>
+
+    <script type="module">
+        import { supabase } from "./js/supabase.js";
+        import { logout } from "./js/auth.js";
+
+        window.logoutAndExit = async function () {
+            await logout();
+            window.location.href = "login.html";
+        };
+
+        document.addEventListener("DOMContentLoaded", loadSales);
+
+
+        async function loadSales() {
+            let ordersWeek = 0;
+            let ordersMonth = 0;
+            let ordersToday = 0;
+
+
+            const statsEl = document.getElementById("stats");
+            const rankingEl = document.getElementById("category-ranking");
+            const salesListEl = document.getElementById("sales-list");
+
+            if (!statsEl || !rankingEl || !salesListEl) {
+                console.warn("Algún contenedor no existe todavía");
+                return;
+            }
+
+            const { data } = await supabase
+                .from("orders")
+                .select(`
+                    id,
+                    customer_name,
+                    total,
+                    created_at,
+                    order_items (
+                        quantity,
+                        price,
+                        products (
+                            name,
+                            categories ( name )
+                        )
+                    )
+                `)
+                .eq("status", "aceptado")
+                .order("created_at", { ascending: false });
+
+            if (!data) return;
+
+            const now = new Date();
+            const weekStart = new Date();
+            weekStart.setDate(now.getDate() - 7);
+
+            const monthStart = new Date();
+            monthStart.setMonth(now.getMonth() - 1);
+
+            let totalGeneral = 0;
+            let totalWeek = 0;
+            let totalMonth = 0;
+
+            const categoryMap = {};
+            const dailyMap = {};
+
+            data.forEach(order => {
+
+                const orderDate = new Date(order.created_at);
+                const orderTotal = Number(order.total);
+
+                /* =========================
+                   CONTEO DE PEDIDOS
+                ========================= */
+
+                if (orderDate >= weekStart) ordersWeek++;
+                if (orderDate >= monthStart) ordersMonth++;
+
+                const isToday = orderDate.toDateString() === now.toDateString();
+                if (isToday) ordersToday++;
+
+                /* =========================
+                   TOTALES DE DINERO
+                ========================= */
+
+                totalGeneral += orderTotal;
+
+                if (orderDate >= weekStart) totalWeek += orderTotal;
+                if (orderDate >= monthStart) totalMonth += orderTotal;
+
+                /* =========================
+                   MAPA DIARIO PARA GRÁFICO
+                ========================= */
+
+                const dayKey = orderDate.toLocaleDateString("es-AR");
+                dailyMap[dayKey] = (dailyMap[dayKey] || 0) + orderTotal;
+
+                /* =========================
+                   RANKING CATEGORÍAS
+                ========================= */
+
+                order.order_items.forEach(item => {
+                    const categoryName =
+                        item.products?.categories?.name || "Sin categoría";
+
+                    const value = item.price * item.quantity;
+
+                    categoryMap[categoryName] =
+                        (categoryMap[categoryName] || 0) + value;
+                });
+
+            });
+
+
+            const promedio = data.length ? totalGeneral / data.length : 0;
+
+            /* =========================
+               KPIs
+            ========================= */
+
+            statsEl.innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border border-yellow-500/20 p-4 rounded-2xl">
+                        <p class="text-xs text-slate-400">Total Histórico</p>
+                        <p class="text-xl font-bold text-yellow-400">$${totalGeneral.toLocaleString()}</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/20 p-4 rounded-2xl">
+                        <p class="text-xs text-slate-400">Esta Semana</p>
+                        <p class="text-xl font-bold text-green-400">$${totalWeek.toLocaleString()}</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/20 p-4 rounded-2xl">
+                        <p class="text-xs text-slate-400">Este Mes</p>
+                        <p class="text-xl font-bold text-blue-400">$${totalMonth.toLocaleString()}</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/20 p-4 rounded-2xl">
+                        <p class="text-xs text-slate-400">Promedio Pedido</p>
+                        <p class="text-xl font-bold">$${promedio.toLocaleString()}</p>
+                    </div>
+                </div>
+            `;
+
+            const ordersCountsEl = document.getElementById("orders-counts");
+
+            if (ordersCountsEl) {
+                ordersCountsEl.innerHTML = `
+                <div class="grid grid-cols-2 gap-4">
+
+                    <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/10 border border-yellow-500/20 p-4 rounded-2xl">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-yellow-400">Pedidos Totales</span>
+                            <span class="material-icons text-yellow-400 text-sm">receipt_long</span>
+                        </div>
+                        <p class="text-2xl font-bold mt-2 text-yellow-400">${data.length}</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-green-500/20 to-green-600/10 border border-green-500/20 p-4 rounded-2xl">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-green-400">Esta Semana</span>
+                            <span class="material-icons text-green-400 text-sm">calendar_view_week</span>
+                        </div>
+                        <p class="text-2xl font-bold mt-2 text-green-400">${ordersWeek}</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/10 border border-blue-500/20 p-4 rounded-2xl">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-blue-400">Este Mes</span>
+                            <span class="material-icons text-blue-400 text-sm">calendar_month</span>
+                        </div>
+                        <p class="text-2xl font-bold mt-2 text-blue-400">${ordersMonth}</p>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/10 border border-purple-500/20 p-4 rounded-2xl">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs text-purple-400">Hoy</span>
+                            <span class="material-icons text-purple-400 text-sm">today</span>
+                        </div>
+                        <p class="text-2xl font-bold mt-2">${ordersToday}</p>
+                    </div>
+
+                </div>
+                `;
+            }
+
+
+            /* =========================
+               GRÁFICO
+            ========================= */
+
+            const labels = Object.keys(dailyMap);
+            const values = Object.values(dailyMap);
+
+            const chartCanvas = document.getElementById("salesChart");
+            if (!chartCanvas) return;
+
+
+            new Chart(chartCanvas, {
+                type: 'bar',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Ingresos',
+                        data: values,
+                        backgroundColor: '#facc15'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            /* =========================
+               RANKING CATEGORÍAS
+            ========================= */
+
+            const sortedCategories = Object.entries(categoryMap)
+                .sort((a, b) => b[1] - a[1]);
+
+            document.getElementById("category-ranking").innerHTML = `
+                <div class="bg-zinc-900 p-4 rounded-2xl space-y-2">
+                    <h2 class="text-sm text-slate-400">Categorías más rentables</h2>
+                    ${sortedCategories.map(([name, value]) => `
+                        <div class="flex justify-between text-sm">
+                            <span>${name}</span>
+                            <span class="text-yellow-400 font-semibold">
+                                $${value.toLocaleString()}
+                            </span>
+                        </div>
+                    `).join("")}
+                </div>
+            `;
+
+            /* =========================
+               LISTA DETALLE
+            ========================= */
+
+            document.getElementById("sales-list").innerHTML = data.map(o => `
+                <div class="bg-zinc-900 p-4 rounded-xl shadow-md space-y-2">
+
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <p class="font-semibold">${o.customer_name}</p>
+                            <p class="text-xs text-slate-500">
+                                ${new Date(o.created_at).toLocaleDateString()}
+                            </p>
+                        </div>
+                        <span class="text-yellow-400 font-bold text-lg">
+                            $${o.total}
+                        </span>
+                    </div>
+
+                    <div class="text-xs text-slate-400 space-y-1">
+                        ${o.order_items.map(i => `
+                            <div class="flex justify-between">
+                                <span>${i.products.name} x${i.quantity}</span>
+                                <span>$${i.price * i.quantity}</span>
+                            </div>
+                        `).join("")}
+                    </div>
+
+                </div>
+            `).join("");
+        }
+
+        async function updateOrdersBadge() {
+
+            const badge = document.getElementById("orders-badge");
+            if (!badge) return;
+
+            const { count, error } = await supabase
+                .from("orders")
+                .select("*", { count: "exact", head: true })
+                .eq("status", "pendiente");
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove("hidden");
+                localStorage.setItem("pachi_new_orders", count);
+            } else {
+                badge.classList.add("hidden");
+                localStorage.removeItem("pachi_new_orders");
+            }
+        }
+
+        updateOrdersBadge();
+
+        const badge = document.getElementById("orders-badge");
+        const sound = document.getElementById("order-sound");
+        let soundUnlocked = false;
+
+        document.addEventListener("click", () => {
+            if (sound && !soundUnlocked) {
+                sound.play()
+                    .then(() => {
+                        sound.pause();
+                        sound.currentTime = 0;
+                        soundUnlocked = true;
+                        console.log("Sonido desbloqueado");
+                    })
+                    .catch(err => console.log(err));
+            }
+        });
+
+
+
+        let pendingCount = 0;
+
+
+        /* ===========================
+           Cargar contador inicial
+        =========================== */
+
+        async function loadInitialCount() {
+
+            const { count, error } = await supabase
+                .from("orders")
+                .select("*", { count: "exact", head: true })
+                .eq("status", "pendiente");
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            pendingCount = count || 0;
+            updateBadge();
+        }
+
+        function updateBadge() {
+
+            if (!badge) return;
+
+            if (pendingCount > 0) {
+                badge.textContent = pendingCount;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        }
+
+        /* ===========================
+           Escuchar nuevos pedidos
+        =========================== */
+
+        supabase
+            .channel("orders-channel")
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "orders"
+                },
+
+                (payload) => {
+
+                    console.log("Nuevo pedido realtime:", payload);
+
+                    if (payload.new.status === "pendiente") {
+
+                        pendingCount++;
+                        updateBadge();
+
+                        if (sound) {
+                            sound.currentTime = 0;
+                            sound.play().catch(err => {
+                                console.log("No se pudo reproducir sonido:", err);
+                            });
+                        }
+                    }
+                }
+
+            )
+            .subscribe((status) => {
+                console.log("Estado canal:", status);
+            });
+
+
+
+        loadInitialCount();
+
+    </script>
+
+</body>
+
+</html>

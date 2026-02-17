@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Pachi Admin - Editar Menú</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="icon" type="image/png" sizes="32x32" href="img/pachiPNG.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="img/pachiPNG.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="img/pachiPNG.png">
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#FBBF24", // Yellow highlight
+                        secondary: "#EF4444", // Red highlight
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#0A0A0A",
+                        "card-dark": "#171717",
+                    },
+                    fontFamily: {
+                        display: ["Outfit", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "12px",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .ios-blur {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+    <style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+
+        .logo {
+            width: 5rem;
+        }
+    </style>
+</head>
+<!-- PUNTO DE RESTAURACIÓN HASTA ACA FUNCIONA GOD -->
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen pb-20">
+    <!-- WRAPPER DESKTOP -->
+    <div class="md:flex min-h-screen">
+
+        <!-- =======================
+         SIDEBAR (SOLO DESKTOP)
+    ======================== -->
+        <aside class="hidden md:flex md:flex-col w-64 bg-card-dark p-6 border-r border-white/10">
+
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-full border-2 border-primary overflow-hidden">
+                    <img src="img/pachiPNG.png" class="w-full h-full object-cover" />
+                </div>
+                <div>
+                    <h2 class="font-bold">Panel Admin</h2>
+                    <p class="text-xs text-slate-400">Dashboard</p>
+                </div>
+            </div>
+
+            <nav class="flex flex-col gap-4 text-sm">
+
+                <button class="flex items-center gap-3 text-primary font-semibold">
+                    <span class="material-icons">restaurant_menu</span>
+                    Inicio
+                </button>
+
+                <button onclick="window.location.href='index.html'"
+                    class="flex items-center gap-3 text-slate-400 hover:text-primary transition">
+                    <span class="material-icons">menu_book</span>
+                    Menú
+                </button>
+
+                <button onclick="window.location.href='ventas.html'"
+                    class="flex items-center gap-3 text-slate-400 hover:text-primary transition">
+                    <span class="material-icons">equalizer</span>
+                    Ventas
+                </button>
+
+                <button onclick="window.location.href='pedidos.html'"
+                    class="flex items-center gap-3 text-slate-400 hover:text-primary transition">
+                    <span class="material-icons">notifications</span>
+                    Pedidos
+                </button>
+
+            </nav>
+
+            <div class="mt-auto pt-10">
+                <button onclick="logoutAndExit()" class="text-red-500 text-sm">
+                    Cerrar sesión
+                </button>
+            </div>
+
+        </aside>
+
+        <!-- =======================
+         CONTENIDO PRINCIPAL
+    ======================== -->
+        <div class="flex-1 flex flex-col">
+
+            <!-- HEADER (MOBILE ONLY) -->
+            <nav
+                class="md:hidden sticky top-0 z-50 bg-white/80 dark:bg-black/80 ios-blur border-b border-slate-200 dark:border-white/10 px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="logo bg-black rounded-full border-2 border-primary flex items-center justify-center p-1 overflow-hidden">
+                            <img alt="Pachi Logo" class="w-full h-full object-cover rounded-full"
+                                src="img/pachiPNG.png" />
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold leading-tight">Panel Admin</h1>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Editando Menú</p>
+                        </div>
+                    </div>
+
+                    <button onclick="logoutAndExit()" class="text-red-500 text-sm">
+                        Cerrar sesión
+                    </button>
+                </div>
+            </nav>
+
+            <!-- MAIN CONTENT -->
+            <main class="flex-1 w-full max-w-md md:max-w-4xl lg:max-w-6xl mx-auto p-4 md:p-10 space-y-6">
+
+                <!-- HABILITAR PEDIDOS -->
+                <section>
+                    <div
+                        class="bg-white dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-white/5">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="font-semibold text-sm">Habilitar pedidos</h3>
+                                <p class="text-xs text-slate-400">Permitir que los clientes envíen pedidos</p>
+                            </div>
+
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="orders-toggle" class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-slate-300 peer rounded-full dark:bg-slate-600 peer-checked:bg-primary transition-all">
+                                </div>
+                                <div
+                                    class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-all peer-checked:translate-x-5">
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NUEVA CATEGORIA -->
+                <section>
+                    <div class="flex items-center justify-between mb-3 px-1">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                            📂 Nueva Categoría
+                        </h2>
+                    </div>
+
+                    <div
+                        class="bg-white dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-white/5">
+                        <div class="flex gap-3">
+                            <input id="newCategory"
+                                class="flex-1 bg-transparent border-b border-slate-200 dark:border-white/10 focus:border-primary pb-1 text-sm outline-none"
+                                placeholder="Nombre de categoría" />
+                            <button id="createCategory"
+                                class="bg-primary text-black px-4 py-2 rounded-xl font-semibold text-sm">
+                                Crear
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CATEGORÍAS DINÁMICAS -->
+                <div id="dynamicCategories"></div>
+
+            </main>
+
+            <!-- =======================
+             BOTTOM NAV (SOLO MOBILE)
+        ======================== -->
+            <nav
+                class="md:hidden fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-black/90 ios-blur border-t border-slate-200 dark:border-white/10 px-6 py-2 pb-6 flex justify-around items-center">
+
+                <button class="flex flex-col items-center gap-1 text-primary">
+                    <span class="material-icons">restaurant_menu</span>
+                    <span class="text-[10px] font-bold">Inicio</span>
+                </button>
+
+                <button onclick="window.location.href='index.html'"
+                    class="flex flex-col items-center gap-1 text-slate-400">
+                    <span class="material-icons">menu_book</span>
+                    <span class="text-[10px] font-bold uppercase">Menú</span>
+                </button>
+
+                <button onclick="window.location.href='ventas.html'"
+                    class="flex flex-col items-center gap-1 text-slate-400">
+                    <span class="material-icons">equalizer</span>
+                    <span class="text-[10px] font-medium">Ventas</span>
+                </button>
+
+                <button onclick="window.location.href='pedidos.html'"
+                    class="relative flex flex-col items-center gap-1 text-slate-400 text-xs">
+
+                    <div class="relative">
+                        <span class="material-icons">notifications</span>
+
+                        <span id="orders-badge" class="hidden absolute -top-2 -right-3 
+                   bg-black text-yellow-400 
+                   text-[10px] font-bold 
+                   min-w-[18px] h-[18px] 
+                   px-1 flex items-center justify-center 
+                   rounded-full border border-yellow-400">
+                        </span>
+                    </div>
+
+                    Pedidos
+                </button>
+
+
+            </nav>
+
+        </div>
+    </div>
+    <!-- DELETE MODAL -->
+    <div id="deleteModal"
+        class="fixed inset-0 hidden items-center justify-center z-50 bg-black/60 backdrop-blur-sm transition-opacity">
+
+        <div id="deleteModalContent"
+            class="bg-zinc-900 rounded-2xl p-6 w-[90%] max-w-sm shadow-2xl border border-white/10">
+
+            <h3 class="font-bold text-lg mb-4">Eliminar</h3>
+
+            <p class="text-sm text-slate-400 mb-6">
+                Esta acción no se puede deshacer.
+            </p>
+
+            <div class="flex gap-3">
+                <button id="cancelDelete"
+                    class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-slate-300 font-semibold py-2.5 rounded-xl transition-all">
+                    Cancelar
+                </button>
+
+                <button id="confirmDelete"
+                    class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-xl transition-all">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="order-sound" preload="auto">
+        <source src="notif.mp3" type="audio/mpeg">
+    </audio>
+
+    <script type="module">
+        import { supabase } from "./js/supabase.js";
+        import { getSession } from "./js/auth.js";
+        import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+
+        const session = await getSession();
+
+        if (!session) {
+            window.location.href = "login.html";
+        }
+
+        import { logout } from "./js/auth.js";
+
+        window.logoutAndExit = async function () {
+            await logout();
+            window.location.href = "index.html";
+        };
+
+        async function loadOrdersSetting() {
+            const { data } = await supabase
+                .from("app_settings")
+                .select("orders_enabled")
+                .eq("id", 1)
+                .single();
+
+            if (data) {
+                document.getElementById("orders-toggle").checked = data.orders_enabled;
+            }
+        }
+
+        document.getElementById("orders-toggle")
+            .addEventListener("change", async function () {
+
+                await supabase
+                    .from("app_settings")
+                    .update({ orders_enabled: this.checked })
+                    .eq("id", 1);
+            });
+
+        loadOrdersSetting();
+
+
+
+
+        const dynamicContainer = document.getElementById("dynamicCategories");
+
+        /* ===============================
+           CREAR CATEGORÍA
+        ================================ */
+        document.getElementById("createCategory").addEventListener("click", async () => {
+            const name = document.getElementById("newCategory").value.trim();
+            if (!name) return;
+
+            const { error } = await supabase
+                .from("categories")
+                .insert([{ name }]);
+
+            if (error) {
+                alert(error.message);
+                return;
+            }
+
+            document.getElementById("newCategory").value = "";
+            loadAll();
+        });
+
+        /* ===============================
+           ELIMINAR PRODUCTO
+        ================================ */
+        let deleteTarget = null;
+        let deleteType = null;
+
+        window.deleteProduct = function (id) {
+            deleteTarget = id;
+            deleteType = "product";
+            openDeleteModal();
+        };
+
+        window.deleteCategory = function (id) {
+            deleteTarget = id;
+            deleteType = "category";
+            openDeleteModal();
+        };
+
+
+        async function deleteCategory(id) {
+            await supabase.from("categories").delete().eq("id", id);
+            loadAll();
+        }
+
+        async function editCategory(id, currentName) {
+            const newName = prompt("Nuevo nombre:", currentName);
+            if (!newName) return;
+
+            await supabase
+                .from("categories")
+                .update({ name: newName })
+                .eq("id", id);
+
+            loadAll();
+        }
+
+
+
+
+        /* ===============================
+           RENDER CATEGORÍAS + PRODUCTOS
+        ================================ */
+        async function loadAll() {
+
+            const { data, error } = await supabase
+                .from("categories")
+                .select(`
+                id,
+                name,
+                products (
+                    id,
+                    name,
+                    description,
+                    image,
+                    product_prices (
+                        id,
+                        label,
+                        price
+                    )
+                )
+                `)
+                .order("name");
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            dynamicContainer.innerHTML = "";
+
+            data.forEach(category => {
+
+                const section = document.createElement("section");
+                section.setAttribute("data-category", category.id);
+
+                section.innerHTML = `
+                <div class="flex items-center justify-between mb-3 px-1 space-y-6">
+                    <h2 class="text-lg font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                        🍔 ${category.name}
+                    </h2>
+
+                    <div class="flex items-center gap-3">
+                        <button 
+                            onclick="deleteCategory('${category.id}')"
+                            class="text-red-500 hover:scale-110 transition-transform">
+                            <span class="material-icons text-sm">close</span>
+                        </button>
+
+                        <button 
+                            class="text-primary text-sm font-semibold"
+                            onclick="openProductForm('${category.id}')">
+                            + Nuevo
+                        </button>
+                    </div>
+                </div>
+
+
+            <div class="product-form-container"></div>
+
+            <div class="space-y-3">
+                ${category.products.map(product => `
+                    <div data-product="${product.id}" class="bg-white dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-slate-200 dark:border-white/5 flex items-center justify-between group transition-all active:scale-[0.98]">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-slate-200 dark:bg-neutral-800 rounded-lg overflow-hidden shrink-0">
+                                <img src="${product.image || 'img/pachiPNG.png'}"
+     onerror="this.src='img/pachiPNG.png'" class="w-full h-full object-cover opacity-80" />
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-sm">${product.name}</h3>
+                                <div class="flex items-center gap-2 mt-0.5">
+                                    ${product.product_prices.map(p => `
+        <div class="flex items-center gap-1">
+            <span class="text-xs text-primary font-bold">$${p.price}</span>
+            <span class="text-[10px] text-slate-500">${p.label}</span>
+        </div>
+    `).join("")}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+
+                            <button 
+                                onclick="deleteProduct('${product.id}')"
+                                class="w-9 h-9 flex items-center justify-center rounded-full bg-red-50 dark:bg-red-900/20 text-red-500 hover:scale-110 transition-transform">
+                                <span class="material-icons text-sm">close</span>
+                            </button>
+
+                            <button 
+                                onclick="editProduct('${product.id}', '${category.id}')"
+                                class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 dark:bg-white/5 text-slate-400">
+                                <span class="material-icons">edit</span>
+                            </button>
+
+                        </div>
+
+                    </div>
+                `).join("")}
+            </div>
+        `;
+
+                dynamicContainer.appendChild(section);
+            });
+        }
+
+
+        loadAll();
+
+        window.openProductForm = function (categoryId, product = null) {
+
+            document.querySelectorAll(".product-form-container")
+                .forEach(c => c.innerHTML = "");
+
+            const section = document.querySelector(`section[data-category="${categoryId}"]`);
+
+
+
+
+            if (!section) return;
+
+            const container = section.querySelector(".product-form-container");
+
+            container.innerHTML = `
+        <div class="bg-white dark:bg-card-dark rounded-2xl p-4 shadow-sm border border-primary/30 ring-1 ring-primary/20">
+            <div class="flex items-start gap-4">
+                <div class="relative group">
+                    <div class="w-20 h-20 bg-slate-200 dark:bg-neutral-800 rounded-xl overflow-hidden">
+                        <img id="preview-${categoryId}"
+                            src="${product && product.image ? product.image : 'img/pachiPNG.png'}"
+                            class="w-full h-full object-cover" />
+                    </div>
+
+                    <button type="button"
+                        onclick="document.getElementById('image-${categoryId}').click()"
+                        class="absolute -bottom-1 -right-1 bg-primary text-black p-1.5 rounded-lg shadow-lg flex items-center justify-center">
+                        <span class="material-icons text-sm">photo_camera</span>
+                    </button>
+                    <input type="file" id="image-${categoryId}" class="hidden" accept="image/*">
+                    
+                </div>
+                <div class="flex-1 space-y-3">
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Nombre del Producto</label>
+                        <input id="name-${categoryId}"
+value="${product ? product.name : ''}"
+                            class="w-full bg-transparent border-b border-slate-200 dark:border-white/10 focus:border-primary p-0 pb-1 text-base font-semibold outline-none transition-colors" />
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase font-bold text-slate-400">Descripción</label>
+                        <textarea 
+                            id="desc-${categoryId}"
+                            class="w-full bg-transparent border-b border-slate-200 dark:border-white/10 focus:border-primary p-0 pb-1 text-sm outline-none resize-none transition-colors"
+                        >${product?.description || ''}</textarea>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4">
+                <label class="text-[10px] uppercase font-bold text-slate-400">
+                    Precios (puedes agregar varios)
+                </label>
+
+                <div id="prices-container-${categoryId}" class="space-y-3 mt-2"></div>
+
+                <button type="button"
+                    onclick="addPriceField('${categoryId}')"
+                    class="mt-2 text-primary text-sm font-semibold">
+                    + Agregar precio
+                </button>
+            </div>
+
+
+            <div class="flex gap-2 mt-4 pt-4 border-t border-slate-100 dark:border-white/5">
+                <button onclick="saveProduct('${categoryId}', '${product ? product.id : ''}')"
+                    class="flex-1 bg-primary hover:bg-yellow-500 text-black font-bold py-2.5 rounded-xl transition-all flex items-center justify-center gap-2">
+                    <span class="material-icons text-sm">save</span>
+                    Guardar
+                </button>
+                <button onclick="closeForm('${categoryId}', '${product ? product.id : ''}')"
+                    class="px-4 bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 font-semibold py-2.5 rounded-xl">
+                    Cancelar
+                </button>
+            </div>
+        </div>
+    `;
+
+            // dentro de openProductForm
+            if (product) {
+                const productCard = document.querySelector(`[data-product="${product.id}"]`);
+                if (productCard) productCard.classList.add("hidden");
+            }
+
+            const fileInput = document.getElementById(`image-${categoryId}`);
+            const preview = document.getElementById(`preview-${categoryId}`);
+
+            fileInput.addEventListener("change", function () {
+                const file = this.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.classList.remove("hidden");
+                };
+
+                reader.readAsDataURL(file);
+            });
+        };
+
+        window.addPriceField = function (categoryId, label = "", price = "") {
+
+            const container = document.getElementById(`prices-container-${categoryId}`);
+
+            const div = document.createElement("div");
+            div.className = "flex gap-3";
+
+            div.innerHTML = `
+                <input placeholder="Etiqueta (Ej: 1 doc, Chicas)"
+                    value="${label}"
+                    class="flex-1 bg-transparent border-b border-slate-200 dark:border-white/10 pb-1 text-sm outline-none" />
+
+                <input type="number" placeholder="Precio"
+                    value="${price}"
+                    class="w-24 bg-transparent border-b border-slate-200 dark:border-white/10 pb-1 text-sm outline-none" />
+
+                <button type="button"
+                    onclick="this.parentElement.remove()"
+                    class="text-red-500">
+                    <span class="material-icons text-sm">close</span>
+                </button>
+            `;
+
+            container.appendChild(div);
+        };
+
+
+        window.editProduct = async function (productId, categoryId) {
+
+            const { data: product, error } = await supabase
+                .from("products")
+                .select(`
+            id,
+            name,
+            description,
+            image,
+            product_prices (
+                id,
+                label,
+                price
+            )
+        `)
+                .eq("id", productId)
+                .single();
+
+            if (error) {
+                alert(error.message);
+                return;
+            }
+
+            openProductForm(categoryId, product);
+
+            // Ahora sí existe "product"
+            if (product.product_prices?.length) {
+                product.product_prices.forEach(p => {
+                    addPriceField(categoryId, p.label, p.price);
+                });
+            }
+        };
+
+
+
+
+
+        window.closeForm = function (categoryId, productId = null) {
+            const section = document.querySelector(`section[data-category="${categoryId}"]`);
+            section.querySelector(".product-form-container").innerHTML = "";
+
+            if (productId) {
+                const productCard = document.querySelector(`[data-product="${productId}"]`);
+                if (productCard) productCard.classList.remove("hidden");
+            }
+        };
+
+        window.saveProduct = async function (categoryId, productId = null) {
+
+            const name = document.getElementById(`name-${categoryId}`).value.trim();
+            const desc = document.getElementById(`desc-${categoryId}`).value.trim();
+            const fileInput = document.getElementById(`image-${categoryId}`);
+            const file = fileInput.files[0];
+
+            let imageUrl = null;
+
+            /* =========================
+               1️⃣ SUBIR IMAGEN (si existe)
+            ========================== */
+            if (file) {
+
+                const fileName = `${Date.now()}-${file.name}`;
+
+                const { error: uploadError } = await supabase
+                    .storage
+                    .from("product-images")
+                    .upload(fileName, file, {
+                        cacheControl: '3600',
+                        upsert: false
+                    });
+
+                if (uploadError) {
+                    alert(uploadError.message);
+                    return;
+                }
+
+                const { data } = supabase
+                    .storage
+                    .from("product-images")
+                    .getPublicUrl(fileName);
+
+                imageUrl = data.publicUrl;
+            }
+
+            /* =========================
+               2️⃣ OBTENER PRECIOS DINÁMICOS
+            ========================== */
+            const priceFields = document.querySelectorAll(`#prices-container-${categoryId} > div`);
+            const prices = [];
+
+            priceFields.forEach(div => {
+                const inputs = div.querySelectorAll("input");
+
+                if (inputs.length < 2) return;
+
+                const label = inputs[0].value.trim();
+                const price = inputs[1].value;
+
+                if (label && price) {
+                    prices.push({ label, price });
+                }
+            });
+
+            /* =========================
+               3️⃣ UPDATE O INSERT PRODUCTO
+            ========================== */
+            if (productId) {
+
+                // UPDATE PRODUCTO
+                const { error } = await supabase
+                    .from("products")
+                    .update({
+                        name,
+                        description: desc,
+                        ...(imageUrl && { image: imageUrl })
+                    })
+                    .eq("id", productId);
+
+                if (error) {
+                    alert(error.message);
+                    return;
+                }
+
+                // BORRAR PRECIOS ANTERIORES
+                await supabase
+                    .from("product_prices")
+                    .delete()
+                    .eq("product_id", productId);
+
+                // INSERTAR NUEVOS PRECIOS
+                if (prices.length) {
+                    await supabase.from("product_prices").insert(
+                        prices.map(p => ({
+                            product_id: productId,
+                            label: p.label,
+                            price: p.price
+                        }))
+                    );
+                }
+
+            } else {
+
+                // INSERT PRODUCTO
+                const { data: newProduct, error } = await supabase
+                    .from("products")
+                    .insert([{
+                        name,
+                        description: desc,
+                        image: imageUrl,
+                        category_id: categoryId
+                    }])
+                    .select()
+                    .single();
+
+                if (error) {
+                    alert(error.message);
+                    return;
+                }
+
+                // INSERTAR PRECIOS
+                if (prices.length) {
+                    await supabase.from("product_prices").insert(
+                        prices.map(p => ({
+                            product_id: newProduct.id,
+                            label: p.label,
+                            price: p.price
+                        }))
+                    );
+                }
+            }
+
+            closeForm(categoryId);
+            loadAll();
+        };
+
+
+        function openDeleteModal() {
+            document.getElementById("deleteModal").classList.remove("hidden");
+            document.getElementById("deleteModal").classList.add("flex");
+        }
+
+        function closeDeleteModal() {
+            document.getElementById("deleteModal").classList.add("hidden");
+            document.getElementById("deleteModal").classList.remove("flex");
+        }
+
+        const cancelBtn = document.getElementById("cancelDelete");
+        const confirmBtn = document.getElementById("confirmDelete");
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener("click", closeDeleteModal);
+        }
+
+        if (confirmBtn) {
+            confirmBtn.addEventListener("click", async () => {
+
+                if (!deleteTarget) return;
+
+                if (deleteType === "product") {
+                    await supabase
+                        .from("products")
+                        .delete()
+                        .eq("id", deleteTarget);
+                }
+
+                if (deleteType === "category") {
+                    await supabase
+                        .from("categories")
+                        .delete()
+                        .eq("id", deleteTarget);
+                }
+
+                deleteTarget = null;
+                deleteType = null;
+
+                closeDeleteModal();
+                loadAll();
+            });
+        }
+
+
+
+        async function updateOrdersBadge() {
+
+            const badge = document.getElementById("orders-badge");
+            if (!badge) return;
+
+            const { count, error } = await supabase
+                .from("orders")
+                .select("*", { count: "exact", head: true })
+                .eq("status", "pendiente");
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            if (count > 0) {
+                badge.textContent = count;
+                badge.classList.remove("hidden");
+                localStorage.setItem("pachi_new_orders", count);
+            } else {
+                badge.classList.add("hidden");
+                localStorage.removeItem("pachi_new_orders");
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            updateOrdersBadge();
+            loadInitialCount();
+        });
+
+
+        const badge = document.getElementById("orders-badge");
+        const sound = document.getElementById("order-sound");
+
+        let pendingCount = 0;
+
+        // 🔓 Desbloquear audio en primera interacción
+        document.addEventListener("click", () => {
+            if (sound) {
+                sound.play()
+                    .then(() => {
+                        sound.pause();
+                        sound.currentTime = 0;
+                    })
+                    .catch(() => { });
+            }
+        }, { once: true });
+
+
+        /* ===========================
+           Cargar contador inicial
+        =========================== */
+
+        async function loadInitialCount() {
+
+            const { count, error } = await supabase
+                .from("orders")
+                .select("*", { count: "exact", head: true })
+                .eq("status", "pendiente");
+
+            if (error) {
+                console.error(error);
+                return;
+            }
+
+            pendingCount = count || 0;
+            updateBadge();
+        }
+
+        function updateBadge() {
+
+            if (!badge) return;
+
+            if (pendingCount > 0) {
+                badge.textContent = pendingCount;
+                badge.classList.remove("hidden");
+            } else {
+                badge.classList.add("hidden");
+            }
+        }
+
+        /* ===========================
+           Escuchar nuevos pedidos
+        =========================== */
+
+        supabase
+            .channel("orders-channel")
+            .on(
+                "postgres_changes",
+                {
+                    event: "INSERT",
+                    schema: "public",
+                    table: "orders"
+                },
+                async (payload) => {
+
+                    if (payload.new.status === "pendiente") {
+
+                        // 🔄 recalcular desde DB
+                        const { count } = await supabase
+                            .from("orders")
+                            .select("*", { count: "exact", head: true })
+                            .eq("status", "pendiente");
+
+                        pendingCount = count || 0;
+                        updateBadge();
+
+                        if (sound && document.visibilityState === "visible") {
+                            sound.currentTime = 0;
+                            sound.play().catch(() => { });
+                        }
+                    }
+                }
+            )
+            .subscribe((status) => {
+                console.log("Estado canal:", status);
+            });
+
+
+    </script>
+</body>
+
+</html>

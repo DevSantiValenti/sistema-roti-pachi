@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pedidos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="icon" href="img/pachiPNG.png">
+</head>
+
+<body class="bg-black text-white min-h-screen pb-28">
+
+    <div class="md:flex min-h-screen">
+
+        <!-- SIDEBAR DESKTOP -->
+        <aside class="hidden md:flex md:flex-col w-64 bg-zinc-950 p-6 border-r border-white/10">
+
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-12 h-12 rounded-full border-2 border-yellow-400 overflow-hidden">
+                    <img src="img/pachiPNG.png" class="w-full h-full object-cover" />
+                </div>
+                <div>
+                    <h2 class="font-bold">Panel Admin</h2>
+                    <p class="text-xs text-slate-400">Pedidos</p>
+                </div>
+            </div>
+
+            <nav class="flex flex-col gap-4 text-sm">
+                <button onclick="window.location.href='dash.html'"
+                    class="flex items-center gap-3 text-slate-400 hover:text-yellow-400 transition">
+                    <span class="material-icons">restaurant_menu</span>
+                    Inicio
+                </button>
+
+                <button onclick="window.location.href='ventas.html'"
+                    class="flex items-center gap-3 text-slate-400 hover:text-yellow-400 transition">
+                    <span class="material-icons">equalizer</span>
+                    Ventas
+                </button>
+
+                <button class="flex items-center gap-3 text-yellow-400 font-semibold">
+                    <span class="material-icons">notifications</span>
+                    Pedidos
+                </button>
+            </nav>
+
+            <div class="mt-auto pt-10">
+                <button onclick="logoutAndExit()" class="text-red-500 text-sm">
+                    Cerrar sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO -->
+        <div class="flex-1 flex flex-col">
+
+            <!-- HEADER MOBILE -->
+            <nav class="md:hidden sticky top-0 z-50 bg-black/80 backdrop-blur border-b border-white/10 px-4 py-3">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-black rounded-full border-2 border-yellow-400 p-1">
+                            <img class="w-10 h-10 object-cover rounded-full" src="img/pachiPNG.png" />
+                        </div>
+                        <div>
+                            <h1 class="text-lg font-bold">Panel Admin</h1>
+                            <p class="text-xs text-slate-400">Pedidos</p>
+                        </div>
+                    </div>
+                    <button onclick="logoutAndExit()" class="text-red-500 text-sm">
+                        Cerrar sesión
+                    </button>
+                </div>
+            </nav>
+
+            <main class="flex-1 w-full max-w-md md:max-w-4xl lg:max-w-6xl mx-auto px-4 py-6 md:p-10 space-y-4">
+                <div id="orders-container" class="space-y-4"></div>
+            </main>
+
+            <!-- FOOTER MOBILE -->
+            <nav
+                class="md:hidden fixed bottom-0 left-0 right-0 bg-black border-t border-white/10 px-6 py-3 flex justify-around items-center">
+
+                <button onclick="window.location.href='dash.html'"
+                    class="flex flex-col items-center text-slate-400 text-xs">
+                    <span class="material-icons">restaurant_menu</span>
+                    Inicio
+                </button>
+
+                <button onclick="window.location.href='ventas.html'"
+                    class="flex flex-col items-center text-slate-400 text-xs">
+                    <span class="material-icons">equalizer</span>
+                    Ventas
+                </button>
+
+                <button onclick="window.location.href='pedidos.html'"
+                    class="relative flex flex-col items-center gap-1 text-slate-400 text-xs">
+
+                    <div class="relative">
+                        <span class="material-icons">notifications</span>
+
+                        <!-- BADGE -->
+                        <span id="orders-badge" class="hidden absolute -top-2 -right-3 
+                   bg-black text-yellow-400 
+                   text-[10px] font-bold 
+                   min-w-[18px] h-[18px] 
+                   px-1 flex items-center justify-center 
+                   rounded-full border border-yellow-400">
+                        </span>
+                    </div>
+
+                    Pedidos
+                </button>
+
+            </nav>
+
+        </div>
+    </div>
+    <!-- DELETE MODAL -->
+    <div id="deleteModal"
+        class="fixed inset-0 hidden items-center justify-center z-50 bg-black/60 backdrop-blur-sm transition-opacity">
+
+        <div id="deleteModalContent"
+            class="bg-zinc-900 rounded-2xl p-6 w-[90%] max-w-sm shadow-2xl border border-white/10 transform scale-95 opacity-0 transition-all duration-200">
+
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-11 h-11 rounded-full bg-red-500/10 flex items-center justify-center text-red-500">
+                    <span class="material-icons">delete_forever</span>
+                </div>
+                <h3 class="font-bold text-lg">Eliminar pedido</h3>
+            </div>
+
+            <p class="text-sm text-slate-400 mb-6 leading-relaxed">
+                Esta acción eliminará permanentemente el pedido seleccionado.
+                <br>
+                <span class="text-red-400 font-semibold">No se puede deshacer.</span>
+            </p>
+
+            <div class="flex gap-3">
+                <button id="cancelDelete"
+                    class="flex-1 bg-zinc-800 hover:bg-zinc-700 text-slate-300 font-semibold py-2.5 rounded-xl transition-all">
+                    Cancelar
+                </button>
+
+                <button id="confirmDelete"
+                    class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2.5 rounded-xl transition-all shadow-lg shadow-red-500/30">
+                    Eliminar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <script type="module">
+        import { supabase } from "./js/supabase.js";
+        import { logout } from "./js/auth.js";
+
+        window.logoutAndExit = async function () {
+            await logout();
+            window.location.href = "login.html";
+        };
+
+        async function loadOrders() {
+
+            const { data } = await supabase
+                .from("orders")
+                .select(`
+                        id,
+                        customer_name,
+                        total,
+                        status,
+                        created_at,
+                        order_items (
+                            quantity,
+                            price,
+                            product_price_label,
+                            products ( name )
+                        )
+                    `)
+                .order("created_at", { ascending: false });
+
+            const container = document.getElementById("orders-container");
+            if (!container) return;
+
+            container.innerHTML = "";
+
+            let html = "";
+
+            data.forEach(order => {
+
+                html += `
+        <div class="bg-zinc-900 p-4 rounded-2xl shadow-lg">
+
+            <div class="flex justify-between items-start mb-2">
+                <div>
+                    <h3 class="font-bold">${order.customer_name}</h3>
+                    <p class="text-xs text-slate-400">
+                        ${new Date(order.created_at).toLocaleString()}
+                    </p>
+                </div>
+                <span class="font-bold text-yellow-400 text-lg">
+                    $${order.total}
+                </span>
+            </div>
+
+            <div class="text-sm space-y-1 text-slate-300">
+                ${order.order_items.map(i => `
+                    <div class="flex justify-between">
+                        <span>
+                            ${i.products?.name || "Producto eliminado"}
+                            ${i.product_price_label ? `(${i.product_price_label})` : ""}
+                            x${i.quantity}
+                        </span>
+                        <span>$${i.price * i.quantity}</span>
+                    </div>
+                `).join("")}
+            </div>
+
+            <div class="flex justify-end gap-4 mt-3">
+                ${order.status === "pendiente"
+                        ? `<button onclick="acceptOrder('${order.id}')" class="text-green-500">
+                         <span class="material-icons">check</span>
+                       </button>`
+                        : `<span class="text-green-400 text-sm font-semibold">Aceptado</span>`
+                    }
+
+                <button onclick="deleteOrder('${order.id}')" class="text-red-500">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+
+        </div>
+        `;
+            });
+
+            container.innerHTML = html;
+        }
+
+
+
+
+
+
+
+        window.acceptOrder = async function (id) {
+            await supabase.from("orders").update({ status: "aceptado" }).eq("id", id);
+            loadOrders();
+        };
+
+        let orderToDelete = null;
+
+        const deleteModal = document.getElementById("deleteModal");
+        const deleteModalContent = document.getElementById("deleteModalContent");
+        const confirmDeleteBtn = document.getElementById("confirmDelete");
+        const cancelDeleteBtn = document.getElementById("cancelDelete");
+
+        window.deleteOrder = function (id) {
+            orderToDelete = id;
+            openDeleteModal();
+        };
+
+        function openDeleteModal() {
+            deleteModal.classList.remove("hidden");
+            deleteModal.classList.add("flex");
+
+            setTimeout(() => {
+                deleteModalContent.classList.remove("scale-95", "opacity-0");
+                deleteModalContent.classList.add("scale-100", "opacity-100");
+            }, 10);
+        }
+
+        function closeDeleteModal() {
+            deleteModalContent.classList.add("scale-95", "opacity-0");
+
+            setTimeout(() => {
+                deleteModal.classList.add("hidden");
+                deleteModal.classList.remove("flex");
+                orderToDelete = null;
+            }, 200);
+        }
+
+        confirmDeleteBtn.addEventListener("click", async () => {
+
+            if (!orderToDelete) return;
+
+            await supabase.from("orders").delete().eq("id", orderToDelete);
+
+            closeDeleteModal();
+            loadOrders();
+        });
+
+        cancelDeleteBtn.addEventListener("click", closeDeleteModal);
+
+        deleteModal.addEventListener("click", (e) => {
+            if (e.target === deleteModal) closeDeleteModal();
+        });
+
+
+        // loadOrders();
+        document.addEventListener("DOMContentLoaded", () => {
+            loadOrders();
+        });
+
+        const badge = document.getElementById("orders-badge");
+        if (badge) badge.classList.add("hidden");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            localStorage.removeItem("pachi_new_orders");
+
+            const badge = document.getElementById("orders-badge");
+            if (badge) badge.classList.add("hidden");
+        });
+
+        supabase
+            .channel("orders-live")
+            .on(
+                "postgres_changes",
+                {
+                    event: "*",
+                    schema: "public",
+                    table: "orders"
+                },
+                () => {
+                    loadOrders();
+                }
+            )
+            .subscribe();
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Rotisería - Menú</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="icon" type="image/png" sizes="32x32" href="img/pachiPNG.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="img/pachiPNG.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="img/pachiPNG.png">
+
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#facc15", // Vibrant Yellow from logo
+            secondary: "#ef4444", // Red from logo
+            "background-light": "#f8fafc",
+            "background-dark": "#0a0a0a",
+          },
+          fontFamily: {
+            display: ["Outfit", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem",
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #facc15;
+      border-radius: 10px;
+    }
+
+    .bg-smoke {
+      background: linear-gradient(to bottom, rgba(10, 10, 10, 0.8), rgba(10, 10, 10, 0.95)), url('https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1000&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  <style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+
+    .logo {
+      width: 5rem !important;
+    }
+
+    .chips {
+      color: #fa1515;
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen">
+  <header
+    class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-3 border-b border-slate-200 dark:border-white/10">
+
+    <div class="flex items-center justify-around">
+
+      <!-- IZQUIERDA: LOGO + NOMBRE -->
+      <div class="flex items-center gap-3">
+        <div
+          class="logo bg-black rounded-full border-2 border-primary flex items-center justify-center p-1 overflow-hidden">
+          <img alt="Pachi Logo" class="w-full h-full object-cover object-center rounded-full" src="img/pachiPNG.png" />
+        </div>
+
+        <div>
+          <h1 class="font-bold text-xl tracking-tight uppercase">
+            Rotisería <span class="text-primary">PACHI</span>
+          </h1>
+          <p class="text-[10px] text-secondary font-bold uppercase tracking-widest leading-none">
+            Sabor que se siente
+          </p>
+        </div>
+      </div>
+
+      <!-- DERECHA: UBICACIÓN + ICONO PERSONA -->
+      <div class="flex items-center gap-4">
+
+        <a href="https://maps.app.goo.gl/411Pg7Aw6bi99MKN6?g_st=ac" target="_blank"
+          class="flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
+
+          <span class="material-icons text-base text-secondary">location_on</span>
+          Fortín Aguilar 2732
+        </a>
+      </div>
+
+      <button onclick="window.location.href='dash.html'" class="fs-1 p-2 bg-slate-100 dark:bg-white/5 rounded-full">
+          <span class="material-icons text-primary">person</span>
+        </button>
+
+    </div>
+
+  </header>
+
+  <main class="pb-24">
+    <section class="mt-4 px-4">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <span class="material-icons text-secondary">local_fire_department</span> Promos Imperdibles
+        </h2>
+        <span onclick="window.location.href='promos.html'"
+          class="text-xs font-semibold text-primary uppercase tracking-wider">Ver todas</span>
+      </div>
+      <div id="promos-container" class="flex overflow-x-auto gap-4 pb-4 custom-scrollbar snap-x">
+
+      </div>
+    </section>
+    <nav id="categories-nav"
+      class="sticky top-[90px] z-40 bg-background-light dark:bg-background-dark py-4 px-4 flex gap-3 overflow-x-auto custom-scrollbar">
+    </nav>
+    <div id="menu-container" class="space-y-10 px-4 mt-6">
+
+    </div>
+    <section class="mt-6 px-4">
+      <div id="variedades-container"></div>
+    </section>
+
+  </main>
+  <nav
+    class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-lg border-t border-slate-200 dark:border-white/10 px-6 py-3">
+    <div class="max-w-md mx-auto flex items-center justify-around">
+      <button class="flex flex-col items-center gap-1 text-primary">
+        <span class="material-icons">home</span>
+        <span class="text-[10px] font-bold uppercase">Inicio</span>
+      </button>
+      <!-- <button onclick="window.location.href='index.html'"
+        class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+        <span class="material-icons">menu_book</span>
+        <span class="text-[10px] font-bold uppercase">Menú</span>
+      </button> -->
+      <button onclick="window.location.href='carrito.html'"
+        class="relative -mt-12 flex items-center justify-center w-16 h-16 bg-secondary text-white rounded-full shadow-xl shadow-secondary/40 border-4 border-white dark:border-black transition-transform active:scale-90">
+        <span class="material-icons text-3xl">add_shopping_cart</span>
+      </button>
+      <button onclick="window.location.href='promos.html'"
+        class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+        <span class="material-icons">stars</span>
+        <span class="text-[10px] font-bold uppercase">Promos</span>
+      </button>
+      <!-- <button
+        class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500 hover:text-primary transition-colors">
+        <span class="material-icons">person</span>
+        <span class="text-[10px] font-bold uppercase">Perfil</span>
+      </button> -->
+    </div>
+  </nav>
+  <div onclick="window.location.href='carrito.html'"
+    class="fixed bottom-24 right-4 z-40 scale-0 opacity-0 transition-all duration-300 cursor-pointer" id="cart-bubble">
+    <div class="bg-primary text-black px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2">
+      <span>Ver mi pedido</span>
+      <span class="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+    </div>
+  </div>
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    import { supabase } from "./js/supabase.js";
+
+    const menuContainer = document.getElementById("menu-container");
+    const categoriesNav = document.getElementById("categories-nav");
+
+    async function loadMenu() {
+
+      const { data, error } = await supabase
+        .from("categories")
+        .select(`
+        id,
+        name,
+        products (
+          id,
+          name,
+          description,
+          image,
+          product_prices (
+            id,
+            label,
+            price
+          )
+        )
+      `)
+        .order("name");
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      categoriesNav.innerHTML = "";
+      menuContainer.innerHTML = "";
+
+      data.forEach((category, index) => {
+
+        const nameLower = category.name.toLowerCase();
+
+        const isPromo =
+          nameLower === "promos" ||
+          nameLower === "promociones";
+
+        const isVariedad =
+          nameLower === "variedad" ||
+          nameLower === "variedades";
+
+        if (isPromo || isVariedad) return;
+
+
+        const slug = category.name.toLowerCase().replace(/\s+/g, "-");
+
+        /* ===========================
+           NAV CATEGORÍAS (NO TOCAR DISEÑO)
+        ============================ */
+
+        const navItem = document.createElement("a");
+        navItem.href = `#${slug}`;
+
+        navItem.className =
+          index === 0
+            ? "flex-none flex items-center gap-2 px-4 py-2 rounded-full bg-primary text-black font-bold text-sm shadow-lg shadow-primary/20"
+            : "flex-none flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 dark:bg-white/5 font-bold text-sm";
+
+        navItem.innerHTML = `
+          <span class="material-icons chips text-sm text-secondary">restaurant_menu</span>
+          ${category.name}
+        `;
+
+        categoriesNav.appendChild(navItem);
+
+        /* ===========================
+           SECCIÓN CATEGORÍA
+        ============================ */
+
+        const section = document.createElement("section");
+        section.id = slug;
+
+        section.innerHTML = `
+          <div class="flex items-center gap-2 mb-6">
+            <div class="h-8 w-1 bg-primary rounded-full"></div>
+            <h2 class="text-2xl font-black uppercase tracking-tight">${category.name}</h2>
+          </div>
+          <div class="grid grid-cols-1 gap-4">
+            ${category.products.map(product => renderProduct(product)).join("")}
+          </div>
+        `;
+
+        menuContainer.appendChild(section);
+      });
+
+    }
+
+    async function loadPromos() {
+
+      const { data, error } = await supabase
+        .from("categories")
+        .select(`
+      id,
+      name,
+      products (
+        id,
+        name,
+        product_prices (
+          id,
+          label,
+          price
+        )
+      )
+    `);
+
+      if (error || !data) return;
+
+      const container = document.getElementById("promos-container");
+      if (!container) return; // ← AGREGA ESTO
+      container.innerHTML = "";
+
+
+      // 🔎 Filtrar categorías que sean promos (sin importar mayúsculas)
+      const promoCategories = data.filter(cat => {
+        const name = cat.name.toLowerCase();
+        return name === "promos" || name === "promociones";
+      });
+
+      if (!promoCategories.length) return;
+
+      // 🔥 Unir todos los productos de esas categorías
+      const promoProducts = promoCategories.flatMap(cat => cat.products);
+
+      promoProducts.forEach((product, index) => {
+
+        if (!product.product_prices.length) return;
+
+        const priceObj = product.product_prices[0];
+        const price = Number(priceObj.price);
+        const oldPrice = Math.round(price * 1.15);
+
+        container.innerHTML += `
+<div
+  data-product
+  data-id="${product.id}"
+  data-name="${product.name}"
+  data-image=""
+  class="flex-none w-72 bg-gradient-to-br ${index % 2 === 0
+            ? "from-secondary to-red-700 text-white"
+            : "from-primary to-amber-500 text-black"}
+  rounded-3xl p-5 snap-center relative overflow-hidden flex flex-col justify-between">
+
+  <div class="relative z-10">
+
+    <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+      ${priceObj.label}
+    </span>
+
+    <h3 class="text-lg font-bold mt-2">
+      ${product.name}
+    </h3>
+
+    <div class="mt-4 flex items-end justify-between">
+      <div class="flex items-end gap-2">
+        <span class="text-2xl font-black text-primary">
+          $${price.toLocaleString("es-AR")}
+        </span>
+        <span class="text-xs line-through opacity-70 mb-1">
+          $${oldPrice.toLocaleString("es-AR")}
+        </span>
+      </div>
+
+      <button
+        class="add-product ${index % 2 === 0 ? "bg-white text-secondary" : "bg-black text-primary"}
+        rounded-full w-8 h-8 flex items-center justify-center shadow-lg active:scale-90 transition-transform"
+        data-variant="${priceObj.label}"
+        data-price="${price}"
+        data-price-id="${priceObj.id}">
+        <span class="material-icons text-lg">add</span>
+      </button>
+
+    </div>
+  </div>
+
+</div>
+`;
+
+      });
+    }
+
+    async function loadVariedades() {
+
+      const { data, error } = await supabase
+        .from("categories")
+        .select(`
+      id,
+      name,
+      products (
+        id,
+        name,
+        description,
+        product_prices (
+          id,
+          label,
+          price
+        )
+      )
+    `);
+
+      if (error || !data) return;
+
+      const container = document.getElementById("variedades-container");
+      if (!container) return; // ← AGREGA ESTO
+      container.innerHTML = "";
+
+
+      const variedadCategories = data.filter(cat => {
+        const name = cat.name.toLowerCase();
+        return name === "variedad" || name === "variedades";
+      });
+
+      if (!variedadCategories.length) return;
+
+      const productos = variedadCategories.flatMap(cat => cat.products);
+
+      if (!productos.length) return;
+
+      container.innerHTML = `
+    <div class="rounded-3xl bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6 relative overflow-hidden">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-black uppercase tracking-wide">
+          VARIEDADES
+        </h2>
+        <span class="text-xs opacity-60">Lo mejor en Rotiseria Pachi</span>
+      </div>
+
+      <div class="space-y-6" id="variedades-list"></div>
+    </div>
+  `;
+
+      const list = document.getElementById("variedades-list");
+
+      productos.forEach(product => {
+
+        if (!product.product_prices.length) return;
+
+        const priceObj = product.product_prices[0];
+        const price = Number(priceObj.price);
+
+        list.innerHTML += `
+  <div data-product
+       data-id="${product.id}"
+       data-name="${product.name}"
+       data-image=""
+       class="flex items-center justify-between border-b border-white/10 pb-4 last:border-none">
+
+    <div>
+      <h3 class="font-bold text-base">${product.name}</h3>
+      <p class="text-xs opacity-70 mt-1">
+        ${product.description || ""}
+      </p>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <span class="text-primary font-black text-lg">
+        $${price.toLocaleString("es-AR")}
+      </span>
+
+      <button
+        class="add-product w-9 h-9 bg-primary text-black rounded-full flex items-center justify-center shadow-lg"
+        data-variant="${priceObj.label}"
+        data-price="${price}">
+        <span class="material-icons text-sm">add</span>
+      </button>
+    </div>
+
+  </div>
+`;
+
+      });
+    }
+
+
+
+
+    /* ===============================
+   SELECCIÓN VISUAL DE CATEGORÍAS
+================================ */
+
+    categoriesNav.addEventListener("click", function (e) {
+
+      const link = e.target.closest("a");
+      if (!link) return;
+
+      categoriesNav.querySelectorAll("a").forEach(a => {
+        a.classList.remove("bg-primary", "text-black", "shadow-lg", "shadow-primary/20");
+        a.classList.add("bg-slate-100", "dark:bg-white/5");
+      });
+
+      link.classList.remove("bg-slate-100", "dark:bg-white/5");
+      link.classList.add("bg-primary", "text-black", "shadow-lg", "shadow-primary/20");
+    });
+
+    /* ===============================
+   CARRITO
+================================ */
+
+    function getCart() {
+      return JSON.parse(localStorage.getItem("pachi_cart")) || [];
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem("pachi_cart", JSON.stringify(cart));
+    }
+
+    function updateBubble() {
+      const bubble = document.getElementById("cart-bubble");
+      const countSpan = bubble.querySelector("span:last-child");
+
+      const cart = getCart();
+      const totalQty = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+      if (totalQty > 0) {
+        bubble.classList.remove("scale-0", "opacity-0", "pointer-events-none");
+        countSpan.textContent = totalQty;
+      } else {
+        bubble.classList.add("scale-0", "opacity-0", "pointer-events-none");
+      }
+    }
+
+    function addToCart(product) {
+
+      const cart = getCart();
+
+      const existing = cart.find(p =>
+        p.id === product.id &&
+        p.variant === product.variant
+      );
+
+      if (existing) {
+        existing.quantity++;
+      } else {
+        cart.push({
+          ...product,
+          quantity: 1
+        });
+      }
+
+      saveCart(cart);
+      updateBubble();
+    }
+
+    /* ===============================
+       CLICK EN "+"
+    ================================ */
+
+    document.addEventListener("click", function (e) {
+
+      const btn = e.target.closest(".add-product");
+      if (!btn) return;
+
+      const card = btn.closest("[data-product]");
+
+      const product = {
+        id: card.dataset.id,
+        name: card.dataset.name,
+        image: card.dataset.image,
+        description: card.querySelector("p")?.textContent || "",
+        variant: btn.dataset.variant,
+        product_price_id: btn.dataset.priceId,
+        price: Number(btn.dataset.price)
+      };
+
+      addToCart(product);
+    });
+
+    updateBubble();
+
+
+    function renderProduct(product) {
+
+      return `
+      <div data-product
+           data-id="${product.id}"
+           data-name="${product.name}"
+           data-image="${product.image || ''}"
+           class="bg-white dark:bg-white/5 p-4 rounded-2xl flex gap-4 border border-slate-100 dark:border-white/5 group active:scale-[0.98] transition-transform">
+
+        <div class="w-24 h-24 rounded-xl overflow-hidden flex-none relative">
+          <img class="w-full h-full object-cover"
+               src="${product.image || 'img/pachiPNG.png'}"
+     onerror="this.src='img/pachiPNG.png'" />
+        </div>
+
+        <div class="flex-grow flex flex-col justify-between">
+          <div>
+            <h3 class="font-bold text-lg">${product.name}</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              ${product.description || ""}
+            </p>
+          </div>
+
+          <div class="flex items-center justify-between mt-3">
+            <div class="flex gap-4 w-full">
+              ${product.product_prices.map(price => `
+                <div class="flex flex-col items-start bg-slate-50 dark:bg-white/5 p-2 rounded-lg flex-1 relative">
+
+                  <span class="text-[10px] uppercase text-slate-500 font-bold">
+                    ${price.label}
+                  </span>
+
+                  <span class="font-black text-lg">$${price.price}</span>
+
+                  <button
+                    class="add-product absolute -right-2 -bottom-2 w-6 h-6 bg-primary text-black rounded-full flex items-center justify-center shadow-sm"
+                    data-variant="${price.label}"
+                    data-price="${price.price}"
+                    data-price-id="${price.id}">
+                    <span class="material-icons text-sm">add</span>
+                  </button>
+
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    }
+
+    loadMenu();
+    loadPromos();
+    loadVariedades();
+
+
+  </script>
+
+
+
+</body>
+
+</html>

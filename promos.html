@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Promos - Rotisería PACHI</title>
+
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="img/pachiPNG.png">
+
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#facc15",
+                        secondary: "#ef4444",
+                        "background-light": "#f8fafc",
+                        "background-dark": "#0a0a0a",
+                    },
+                    fontFamily: {
+                        display: ["Outfit", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "1rem",
+                    },
+                },
+            },
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .logo {
+            width: 5rem !important;
+        }
+    </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen pb-24">
+
+    <!-- HEADER EXACTO -->
+    <header
+        class="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md px-4 py-3 border-b border-slate-200 dark:border-white/10">
+
+        <div class="flex items-center justify-around">
+
+            <!-- IZQUIERDA: LOGO + NOMBRE -->
+            <div class="flex items-center gap-3">
+                <div
+                    class="logo bg-black rounded-full border-2 border-primary flex items-center justify-center p-1 overflow-hidden">
+                    <img alt="Pachi Logo" class="w-full h-full object-cover object-center rounded-full"
+                        src="img/pachiPNG.png" />
+                </div>
+
+                <div>
+                    <h1 class="font-bold text-xl tracking-tight uppercase">
+                        Rotisería <span class="text-primary">PACHI</span>
+                    </h1>
+                    <p class="text-[10px] text-secondary font-bold uppercase tracking-widest leading-none">
+                        Sabor que se siente
+                    </p>
+                </div>
+            </div>
+
+            <!-- DERECHA: UBICACIÓN + ICONO PERSONA -->
+            <div class="flex items-center gap-4">
+
+                <a href="https://maps.app.goo.gl/411Pg7Aw6bi99MKN6?g_st=ac" target="_blank"
+                    class="flex items-center gap-1 text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-primary transition-colors">
+
+                    <span class="material-icons text-base text-secondary">location_on</span>
+                    Fortín Aguilar 2732
+                </a>
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- CONTENIDO -->
+    <main class="px-4 mt-6 space-y-6 max-w-md md:max-w-5xl lg:max-w-6xl mx-auto">
+
+        <h2 class="text-xl md:text-2xl font-bold flex items-center gap-2">
+            <span class="material-icons text-secondary">local_fire_department</span>
+            Promos Imperdibles
+        </h2>
+
+        <!-- GRID EN DESKTOP -->
+        <div id="promos-list" class="space-y-6 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6">
+        </div>
+
+    </main>
+
+
+    <!-- NAV INFERIOR SOLO INICIO Y CARRITO -->
+    <nav
+        class="fixed bottom-0 left-0 right-0 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-lg border-t border-slate-200 dark:border-white/10 px-6 py-3">
+
+        <div class="max-w-md mx-auto flex items-center justify-around">
+
+            <button id="nav-home" onclick="window.location.href='index.html'"
+                class="flex flex-col items-center gap-1 text-slate-400 transition-colors">
+                <span class="material-icons">home</span>
+                <span class="text-[10px] font-bold uppercase">Inicio</span>
+            </button>
+
+            <button onclick="window.location.href='carrito.html'"
+                class="relative -mt-12 flex items-center justify-center w-16 h-16 bg-secondary text-white rounded-full shadow-xl shadow-secondary/40 border-4 border-white dark:border-black transition-transform active:scale-90">
+                <span class="material-icons text-3xl">add_shopping_cart</span>
+            </button>
+
+            <button id="nav-promos" onclick="window.location.href='promos.html'"
+                class="flex flex-col items-center gap-1 text-slate-400 transition-colors">
+                <span class="material-icons">stars</span>
+                <span class="text-[10px] font-bold uppercase">Promos</span>
+            </button>
+
+        </div>
+    </nav>
+
+
+
+    <div onclick="window.location.href='carrito.html'"
+        class="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 scale-0 opacity-0 transition-all duration-300 cursor-pointer"
+        id="cart-bubble">
+        <div class="bg-primary text-black px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2">
+            <span>Ver mi pedido</span>
+            <span class="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { supabase } from "./js/supabase.js";
+
+        const container = document.getElementById("promos-list");
+
+        function getCart() {
+            return JSON.parse(localStorage.getItem("pachi_cart")) || [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem("pachi_cart", JSON.stringify(cart));
+        }
+
+        function updateBubble() {
+
+            const bubble = document.getElementById("cart-bubble");
+            const countSpan = bubble.querySelector("span:last-child");
+
+            const cart = getCart();
+            const totalQty = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+            if (totalQty > 0) {
+                bubble.classList.remove("scale-0", "opacity-0", "pointer-events-none");
+                countSpan.textContent = totalQty;
+            } else {
+                bubble.classList.add("scale-0", "opacity-0", "pointer-events-none");
+            }
+        }
+
+
+        function addToCart(product) {
+
+            const cart = getCart();
+
+            const existing = cart.find(p =>
+                p.id === product.id &&
+                p.variant === product.variant
+            );
+
+            if (existing) {
+                existing.quantity++;
+            } else {
+                cart.push({
+                    ...product,
+                    image: product.image && product.image.trim() !== ''
+                        ? product.image
+                        : 'img/pachiPNG.png',
+                    quantity: 1
+                });
+            }
+
+            saveCart(cart);
+            updateBubble();
+        }
+
+
+        async function loadPromos() {
+
+            const { data } = await supabase
+                .from("categories")
+                .select(`
+          id,
+          name,
+          products (
+            id,
+            name,
+            product_prices (
+              id,
+              label,
+              price
+            )
+          )
+        `);
+
+            if (!data) return;
+
+            const promoCategories = data.filter(cat => {
+                const name = cat.name.toLowerCase();
+                return name === "promos" || name === "promociones";
+            });
+
+            const promoProducts = promoCategories.flatMap(cat => cat.products);
+
+            promoProducts.forEach((product, index) => {
+
+                if (!product.product_prices.length) return;
+
+                const priceObj = product.product_prices[0];
+                const price = Number(priceObj.price);
+                const oldPrice = Math.round(price * 1.15);
+
+                let html = "";
+
+                html += `
+                <div
+                class="bg-gradient-to-br ${index % 2 === 0
+                        ? "from-secondary to-red-700 text-white"
+                        : "from-primary to-amber-500 text-black"}
+                rounded-3xl p-5 relative overflow-hidden flex flex-col justify-between">
+
+                <div class="relative z-10">
+
+                    <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                    ${priceObj.label}
+                    </span>
+
+                    <h3 class="text-lg font-bold mt-3">
+                    ${product.name}
+                    </h3>
+
+                    <div class="mt-4 flex items-end justify-between">
+                    <div class="flex items-end gap-2">
+                        <span class="text-2xl font-black text-primary">
+                        $${price.toLocaleString("es-AR")}
+                        </span>
+                        <span class="text-xs line-through opacity-70 mb-1">
+                        $${oldPrice.toLocaleString("es-AR")}
+                        </span>
+                    </div>
+
+                    <button
+                        class="${index % 2 === 0 ? "bg-white text-secondary" : "bg-black text-primary"}
+                        rounded-full w-10 h-10 flex items-center justify-center shadow-lg active:scale-90 transition-transform"
+                        onclick="addPromoToCart('${product.id}','${product.name}','${priceObj.label}','${priceObj.id}',${price})">
+                        <span class="material-icons">add</span>
+                    </button>
+
+                    </div>
+                </div>
+
+                <span class="material-icons absolute -right-4 -bottom-4 ${index % 2 === 0 ? "text-white/10" : "text-black/5"} text-9xl">
+                    ${index % 2 === 0 ? "lunch_dining" : "local_pizza"}
+                </span>
+
+                </div>
+                `;
+                container.innerHTML = html;
+            });
+        }
+
+        window.addPromoToCart = function (id, name, variant, priceId, price) {
+            addToCart({
+                id,
+                name,
+                variant,
+                product_price_id: priceId,
+                price,
+                image: ""
+            });
+        }
+
+        loadPromos();
+        updateBubble();
+
+        function setActiveNav() {
+
+            const path = window.location.pathname;
+
+            const homeBtn = document.getElementById("nav-home");
+            const promosBtn = document.getElementById("nav-promos");
+
+            // Reset
+            [homeBtn, promosBtn].forEach(btn => {
+                if (!btn) return;
+                btn.classList.remove("text-primary");
+                btn.classList.add("text-slate-400");
+            });
+
+            if (path.includes("promos")) {
+                promosBtn.classList.remove("text-slate-400");
+                promosBtn.classList.add("text-primary");
+            } else {
+                homeBtn.classList.remove("text-slate-400");
+                homeBtn.classList.add("text-primary");
+            }
+        }
+
+        setActiveNav();
+
+    </script>
+
+</body>
+
+</html>
