@@ -183,8 +183,8 @@
 
         container.innerHTML += `
       <div class="bg-white dark:bg-surface-dark p-4 rounded-2xl flex items-center gap-4 border border-slate-100 dark:border-white/5 shadow-sm">
-        <div class="w-20 h-20 rounded-xl overflow-hidden flex-none bg-slate-200">
-          <img class="w-full h-full object-cover"
+        <div class="w-24 aspect-square rounded-xl overflow-hidden flex-none bg-slate-100">
+          <img class="w-full h-full object-contain"
      src="${item.image && item.image.trim() !== '' ? item.image : 'img/pachiPNG.png'}"
      onerror="this.src='img/pachiPNG.png'" />
 

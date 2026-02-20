@@ -263,6 +263,7 @@
 
         const section = document.createElement("section");
         section.id = slug;
+        section.className = "scroll-mt-40";
 
         section.innerHTML = `
           <div class="flex items-center gap-2 mb-6">
@@ -570,11 +571,12 @@
            data-image="${product.image || ''}"
            class="bg-white dark:bg-white/5 p-4 rounded-2xl flex gap-4 border border-slate-100 dark:border-white/5 group active:scale-[0.98] transition-transform">
 
-        <div class="w-24 h-24 rounded-xl overflow-hidden flex-none relative">
-          <img class="w-full h-full object-cover"
-               src="${product.image || 'img/pachiPNG.png'}"
-     onerror="this.src='img/pachiPNG.png'" />
-        </div>
+        <div class="w-24 aspect-square rounded-xl overflow-hidden flex-none bg-slate-100">
+  <img
+    class="w-full h-full object-contain"
+    src="${product.image || 'img/pachiPNG.png'}"
+    onerror="this.src='img/pachiPNG.png'" />
+</div>
 
         <div class="flex-grow flex flex-col justify-between">
           <div>

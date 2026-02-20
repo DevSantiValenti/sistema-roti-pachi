@@ -235,26 +235,24 @@
                 const price = Number(priceObj.price);
                 const oldPrice = Math.round(price * 1.15);
 
-                let html = "";
-
-                html += `
-                <div
-                class="bg-gradient-to-br ${index % 2 === 0
+                container.innerHTML += `
+        <div
+        class="bg-gradient-to-br ${index % 2 === 0
                         ? "from-secondary to-red-700 text-white"
                         : "from-primary to-amber-500 text-black"}
-                rounded-3xl p-5 relative overflow-hidden flex flex-col justify-between">
+        rounded-3xl p-5 relative overflow-hidden flex flex-col justify-between">
 
-                <div class="relative z-10">
+            <div class="relative z-10">
 
-                    <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2 py-1 rounded-full uppercase">
-                    ${priceObj.label}
-                    </span>
+                <span class="bg-white/20 backdrop-blur-md text-[10px] font-bold px-2 py-1 rounded-full uppercase">
+                ${priceObj.label}
+                </span>
 
-                    <h3 class="text-lg font-bold mt-3">
-                    ${product.name}
-                    </h3>
+                <h3 class="text-lg font-bold mt-3">
+                ${product.name}
+                </h3>
 
-                    <div class="mt-4 flex items-end justify-between">
+                <div class="mt-4 flex items-end justify-between">
                     <div class="flex items-end gap-2">
                         <span class="text-2xl font-black text-primary">
                         $${price.toLocaleString("es-AR")}
@@ -270,17 +268,16 @@
                         onclick="addPromoToCart('${product.id}','${product.name}','${priceObj.label}','${priceObj.id}',${price})">
                         <span class="material-icons">add</span>
                     </button>
-
-                    </div>
                 </div>
 
-                <span class="material-icons absolute -right-4 -bottom-4 ${index % 2 === 0 ? "text-white/10" : "text-black/5"} text-9xl">
-                    ${index % 2 === 0 ? "lunch_dining" : "local_pizza"}
-                </span>
+            </div>
 
-                </div>
-                `;
-                container.innerHTML = html;
+            <span class="material-icons absolute -right-4 -bottom-4 ${index % 2 === 0 ? "text-white/10" : "text-black/5"} text-9xl">
+                ${index % 2 === 0 ? "lunch_dining" : "local_pizza"}
+            </span>
+
+        </div>
+    `;
             });
         }
 
