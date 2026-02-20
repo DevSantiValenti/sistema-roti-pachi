@@ -38,6 +38,12 @@
       scroll-behavior: smooth;
     }
 
+    @media (min-width: 768px) {
+      html {
+        margin: 0 60px;
+      }
+    }
+
     body {
       font-family: 'Outfit', sans-serif;
       -webkit-tap-highlight-color: transparent;
@@ -113,8 +119,8 @@
       </div>
 
       <button onclick="window.location.href='dash.html'" class="fs-1 p-2 bg-slate-100 dark:bg-white/5 rounded-full">
-          <span class="material-icons text-primary">person</span>
-        </button>
+        <span class="material-icons text-primary">person</span>
+      </button>
 
     </div>
 
@@ -173,7 +179,7 @@
     </div>
   </nav>
   <div onclick="window.location.href='carrito.html'"
-    class="fixed bottom-24 right-4 z-40 scale-0 opacity-0 transition-all duration-300 cursor-pointer" id="cart-bubble">
+    class="fixed bottom-24 right-4 z-60 scale-0 opacity-0 transition-all duration-300 cursor-pointer" id="cart-bubble">
     <div class="bg-primary text-black px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2">
       <span>Ver mi pedido</span>
       <span class="bg-black text-white w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
